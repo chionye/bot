@@ -29,7 +29,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
-if DEBUG == False:
+if DEBUG == True:
     WEBHOOK_TOKEN = "5200019147:AAG5bz0uTODuK7ISt0vldhlQJTn_YTbsLvg"
     WEBHOOK_URL = "https://ebde-102-89-34-172.ngrok.io/"
 else:
