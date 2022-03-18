@@ -16,3 +16,4 @@ tzlocal
 python-dateutil
 Pillow == 8.2.0
 tronapi
+pycoingecko

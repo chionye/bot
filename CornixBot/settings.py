@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ["*"]
 
 if DEBUG == True:
     WEBHOOK_TOKEN = "5200019147:AAG5bz0uTODuK7ISt0vldhlQJTn_YTbsLvg"
-    WEBHOOK_URL = "https://ebde-102-89-34-172.ngrok.io/"
+    WEBHOOK_URL = "https://3c32-197-210-29-208.ngrok.io/"
 else:
     WEBHOOK_TOKEN = "5200019147:AAG5bz0uTODuK7ISt0vldhlQJTn_YTbsLvg"
     WEBHOOK_URL = "https://cornix-auto-bot.herokuapp.com/"

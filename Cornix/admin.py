@@ -25,5 +25,5 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(STEP)
 class UserAdmin(admin.ModelAdmin):
 	search_fields = ('step_id','user',)
-	list_display = ['step_id','user','step','state',]
+	list_display = ['step_id','user','next_step','state',]
 

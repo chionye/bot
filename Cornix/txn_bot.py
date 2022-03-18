@@ -1,4 +1,4 @@
-from .config import *
+# from .config import *
 from tronapi import Tron
 from tronapi import HttpProvider
 
@@ -10,17 +10,16 @@ tron = Tron(full_node=full_node,
             event_server=event_server)
 
 
+
+# USDT = "TPuwosVoGpjxdz92pQRBSTpdb55xBsMzjF"
 def check_transaction(hash,sent_amount):
 	try:
 		result = tron.trx.get_transaction(hash)
 		status = result["ret"][0]['contractRet']
 		result = result['raw_data']['contract'][0]['parameter']['value']
 		amount = float(result['amount']/1000000)
-		to_address = result['to_address']
+		to_address = tron.address.from_hex(result['to_address']).decode('ascii')
 
-		print(status)
-		print(amount)
-		print(to_address)
 
 		if status == "SUCCESS" and to_address == USDT and amount == float(sent_amount):
 			return(True)

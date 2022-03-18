@@ -4,7 +4,7 @@ from telebot.types import *
 
 def tech_support():
 	keyboard = InlineKeyboardMarkup()
-	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/CornixAuto_bot")
+	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
 	keyboard.add(support)
 	return(keyboard)
 
@@ -20,7 +20,7 @@ def home_key():
 	# misc = InlineKeyboardButton("Misc.",callback_data=f"misc")
 	# subscription = InlineKeyboardButton("📝 Subscription",callback_data=f"my_subscription")
 	about_cornix = InlineKeyboardButton(f"ℹ️ Help",callback_data=f"about_cornix")
-	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/CornixAuto_bot")
+	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
 
 	keyboard.add(new_client)
 	keyboard.add(my_portfolio,Trades)
@@ -50,7 +50,7 @@ def my_portfolios_btn():
 	keyboard.add(main_menu)
 	return(keyboard)
 
-def new_client_step_1_of_3():
+def new_client_step_1_of_3(show_menu):
 	keyboard = InlineKeyboardMarkup()
 
 	Binance_client = InlineKeyboardButton(f"Binance",callback_data=f"Binance@client")
@@ -58,7 +58,13 @@ def new_client_step_1_of_3():
 	ByBit_client = InlineKeyboardButton(f"ByBit",callback_data=f"ByBit@client")
 	BitMEX_client = InlineKeyboardButton(f"KuCoin",callback_data=f"BitMEX@client")
 	Huobipro_client = InlineKeyboardButton(f"Huobi.pro",callback_data=f"Huobi.pro@client")
-	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/CornixAuto_bot")
+	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
+
+	if show_menu == True:
+		main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
+		keyboard.add(main_menu)
+	else:
+		pass
 	
 	keyboard.add(Binance_client,FTX_client)
 	keyboard.add(ByBit_client,BitMEX_client)
@@ -67,7 +73,7 @@ def new_client_step_1_of_3():
 	return(keyboard)
 
 
-def new_client_step_1_2_of_3(exchange):
+def new_client_step_1_2_of_3(exchange,show_menu):
 	keyboard = InlineKeyboardMarkup()
 	if exchange == "Binance":
 		binance_futures = InlineKeyboardButton(f"Binance Futures (USDT)",callback_data=f"option_binance_futures:{exchange}")
@@ -85,9 +91,15 @@ def new_client_step_1_2_of_3(exchange):
 		keyboard.add(bybit_inverse)
 		keyboard.add(bybit_linear)
 
+	if show_menu == True:
+		main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
+		keyboard.add(main_menu)
+	else:
+		pass
+
 	about_cornix = InlineKeyboardButton(f"About Cornix",callback_data=f"about_cornix")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:1")
-	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/CornixAuto_bot")
+	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
 	
 	
 	keyboard.add(about_cornix,support)
@@ -95,25 +107,37 @@ def new_client_step_1_2_of_3(exchange):
 	return(keyboard)
 
 
-def new_client_step_2_of_3(exchange):
+def new_client_step_2_of_3(exchange,show_menu):
 	keyboard = InlineKeyboardMarkup()
 
 	client_name = InlineKeyboardButton(f"My-{exchange}",callback_data=f"set_name:My-{exchange}")
 	about_cornix = InlineKeyboardButton(f"About Cornix",callback_data=f"about_cornix")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:1_2")
-	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/CornixAuto_bot")
+	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
+
+	if show_menu == True:
+		main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
+		keyboard.add(main_menu)
+	else:
+		pass
 	
 	keyboard.add(client_name)
 	keyboard.add(about_cornix,support)
 	keyboard.add(back)
 	return(keyboard)
 
-def new_client_step_3_of_3(exchange):
+def new_client_step_3_of_3(exchange,show_menu):
 	keyboard = InlineKeyboardMarkup()
 
 	about_cornix = InlineKeyboardButton(f"About Cornix",callback_data=f"about_cornix")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:2")
-	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/CornixAuto_bot")
+	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
+
+	if show_menu == True:
+		main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
+		keyboard.add(main_menu)
+	else:
+		pass
 
 	keyboard.add(about_cornix,support)
 	keyboard.add(back)
@@ -130,7 +154,7 @@ def about_cornix(step="home"):
 	cornix_features = InlineKeyboardButton("What trading features does Cornix offer?",callback_data=f"cornix_features")
 
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:{step}")
-	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/CornixAuto_bot")
+	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
 	
 	keyboard.add(about_cornix_E)
 	keyboard.add(cornix_can_do)
@@ -160,10 +184,11 @@ def client_creation_success():
 def deposit_options():
 	keyboard = InlineKeyboardMarkup()
 
-	key_1 = InlineKeyboardButton(f"$1000 USDT",callback_data=f"deposit:1000")
-	key_2 = InlineKeyboardButton(f"$3000 USDT",callback_data=f"deposit:3000")
-	key_3 = InlineKeyboardButton(f"$5000 USDT",callback_data=f"deposit:5000")
-	key_4 = InlineKeyboardButton(f"$10000 USDT",callback_data=f"deposit:10000")
+	key_1 = InlineKeyboardButton(f"$1,000 USDT",callback_data=f"deposit:1000")
+	key_2 = InlineKeyboardButton(f"$3,000 USDT",callback_data=f"deposit:3000")
+	key_3 = InlineKeyboardButton(f"$5,000 USDT",callback_data=f"deposit:5000")
+	key_4 = InlineKeyboardButton(f"$10,000 USDT",callback_data=f"deposit:10000")
+	# key_4 = InlineKeyboardButton(f"$2,600  USDT",callback_data=f"deposit:2600")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:2")
 	
 	keyboard.add(key_1)
@@ -173,30 +198,11 @@ def deposit_options():
 	keyboard.add(back)
 	return(keyboard)
 
-def subscription_plans():
-	keyboard = InlineKeyboardMarkup()
-
-	month_1 = InlineKeyboardButton(f"1 month, {PLAN['1_MONTH']}/1 month",callback_data=f"sub:1_month")
-	month_3 = InlineKeyboardButton(f"3 months, {PLAN['3_MONTH']}/3 months",callback_data=f"sub:3_months")
-	month_6 = InlineKeyboardButton(f"6 months, {PLAN['6_MONTH']}/6 months",callback_data=f"sub:6_months")
-	month_12 = InlineKeyboardButton(f"12 months, {PLAN['12_MONTH']}/1 year",callback_data=f"sub:1_year")
-	month_ = InlineKeyboardButton(f"Lifetime, {PLAN['_MONTH']}/Lifetime",callback_data=f"sub:_year")
-	
-	keyboard.add(month_1)
-	keyboard.add(month_3)
-	keyboard.add(month_6)
-	keyboard.add(month_12)
-	keyboard.add(month_)
-	return(keyboard)
-
-
 
 def payment_method():
 	keyboard = InlineKeyboardMarkup()
-	btc_pay = InlineKeyboardButton("⚡ TerraUSD(UST)",callback_data=f"pay_with:UST")
 	usdt_pay = InlineKeyboardButton("⚡ USDT.TRC20 (Tether USD(Tron/TRC20))",callback_data=f"pay_with:USDT")
 	back = InlineKeyboardButton("↵ Back",callback_data=f"return_to_menu")
-	keyboard.add(btc_pay)
 	keyboard.add(usdt_pay)
 	keyboard.add(back)
 	return(keyboard)
@@ -224,7 +230,8 @@ def bot_configs():
 def bot_configs_clients(my_clients):
 	keyboard = InlineKeyboardMarkup()
 	for client in my_clients:
-		keyboard.add(InlineKeyboardButton(f"{client.name}",callback_data=f"my_client:{client.client_id}"))
+		client_id = hex(int(client.client_id.time_low))[2:]
+		keyboard.add(InlineKeyboardButton(f"{client.client_name}",callback_data=f"my_client:{client_id}"))
 
 	new_client = InlineKeyboardButton("➕ Add New Client",callback_data=f"new_client")
 	main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
@@ -233,13 +240,20 @@ def bot_configs_clients(my_clients):
 	keyboard.add(main_menu,back)
 	return(keyboard)
 
-def configs_clients(my_client):
+def configs_clients(client_id):
 	keyboard = InlineKeyboardMarkup()
-	delete_client = InlineKeyboardButton("❌ Delete",callback_data=f"delete_client:{my_client.client_id}")
+	delete_client = InlineKeyboardButton("❌ Delete",callback_data=f"delete_client:{client_id}")
 	main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:bot_configs")
 	keyboard.add(delete_client)
 	keyboard.add(main_menu,back)
+	return(keyboard)
+
+
+def back_to_configs():
+	keyboard = InlineKeyboardMarkup()
+	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:bot_configs")
+	keyboard.add(back)
 	return(keyboard)
 
 def Cancel_btn():
