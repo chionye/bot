@@ -87,7 +87,7 @@ def new_client_step_1_2_of_3(exchange,show_menu):
 
 	elif exchange == "Coinex":
 		coinex_futures = InlineKeyboardButton(f"Coinex Futures (USDT)",callback_data=f"option_coinex_futures:{exchange}")
-		coinex_spot = InlineKeyboardButton(f"Binance Spot (Regular)",callback_data=f"option_coinex_spot:{exchange}")
+		coinex_spot = InlineKeyboardButton(f"Coinex Spot (Regular)",callback_data=f"option_coinex_spot:{exchange}")
 		keyboard.add(coinex_futures)
 		keyboard.add(coinex_spot)
 
