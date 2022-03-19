@@ -58,7 +58,7 @@ def new_client_step_1_of_3(show_menu):
 	ByBit_client = InlineKeyboardButton(f"ByBit",callback_data=f"ByBit@client")
 	BitMEX_client = InlineKeyboardButton(f"KuCoin",callback_data=f"BitMEX@client")
 	Huobipro_client = InlineKeyboardButton(f"Huobi.pro",callback_data=f"Huobi.pro@client")
-	coinex_client = InlineKeyboardButton(f"Binance",callback_data=f"Coinex@client")
+	coinex_client = InlineKeyboardButton(f"Coinex",callback_data=f"Coinex@client")
 	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
 
 	if show_menu == True:
