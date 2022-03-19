@@ -172,9 +172,9 @@ Choose a client to preform actions on below, or add a new one by clicking the '+
 
 configure_a_client = """
 <b>Configuration > Client:</b>
-'❌ Delete' button allows you to removes your client and your funds will be returned to your wallet.
+'❌ Delete' button allows you to removes your client.
 
-Choose an option
+Choose an option:
 """
 
 trade_history = """

@@ -15,7 +15,6 @@ from django.views.decorators.http import require_http_methods
 
 
 
-
 NEW_CLIENT = {}
 coin_gecko = CoinGeckoAPI()
 bot = telebot.TeleBot(settings.WEBHOOK_TOKEN,parse_mode='HTML') #Telegram Bot API
@@ -198,7 +197,7 @@ def callback_query(call):
 			MY_STATE["previuos_step"] = "1"
 			STEP.objects.filter(user = user).update(state = MY_STATE)
 
-			if q == "Binance" or q == "ByBit":
+			if q == "Binance" or q == "ByBit" or q == "Coinex":
 				bot.edit_message_text(chat_id=chat_id, text=step_1_2_of_3.format(q), message_id=call.message.message_id,reply_markup=new_client_step_1_2_of_3(q,show_menu))
 			else:
 				bot.edit_message_text(chat_id=chat_id, text=step_2_of_3, message_id=call.message.message_id,reply_markup=new_client_step_2_of_3(q,show_menu))

@@ -58,6 +58,7 @@ def new_client_step_1_of_3(show_menu):
 	ByBit_client = InlineKeyboardButton(f"ByBit",callback_data=f"ByBit@client")
 	BitMEX_client = InlineKeyboardButton(f"KuCoin",callback_data=f"BitMEX@client")
 	Huobipro_client = InlineKeyboardButton(f"Huobi.pro",callback_data=f"Huobi.pro@client")
+	coinex_client = InlineKeyboardButton(f"Binance",callback_data=f"Coinex@client")
 	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
 
 	if show_menu == True:
@@ -68,7 +69,7 @@ def new_client_step_1_of_3(show_menu):
 	
 	keyboard.add(Binance_client,FTX_client)
 	keyboard.add(ByBit_client,BitMEX_client)
-	keyboard.add(Huobipro_client)
+	keyboard.add(Huobipro_client,coinex_client)
 	keyboard.add(support)
 	return(keyboard)
 
@@ -83,6 +84,12 @@ def new_client_step_1_2_of_3(exchange,show_menu):
 		keyboard.add(binance_futures)
 		keyboard.add(binance_coins_futures)
 		keyboard.add(binance_spot)
+
+	elif exchange == "Coinex":
+		coinex_futures = InlineKeyboardButton(f"Coinex Futures (USDT)",callback_data=f"option_coinex_futures:{exchange}")
+		coinex_spot = InlineKeyboardButton(f"Binance Spot (Regular)",callback_data=f"option_coinex_spot:{exchange}")
+		keyboard.add(coinex_futures)
+		keyboard.add(coinex_spot)
 
 	else:
 		bybit_inverse = InlineKeyboardButton(f"ByBit Inverse (USD)",callback_data=f"option_bybit_inverse:{exchange}")
