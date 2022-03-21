@@ -88,8 +88,13 @@ def new_client_step_1_2_of_3(exchange,show_menu):
 	elif exchange == "Coinex":
 		coinex_futures = InlineKeyboardButton(f"Coinex Futures (USDT)",callback_data=f"option_coinex_futures:{exchange}")
 		coinex_spot = InlineKeyboardButton(f"Coinex Spot (Regular)",callback_data=f"option_coinex_spot:{exchange}")
+		coinex_margin = InlineKeyboardButton(f"Coinex Margin",callback_data=f"option_coinex_margin:{exchange}")
+		coinex_finacial = InlineKeyboardButton(f"Coinex Financial",callback_data=f"option_coinex_financial:{exchange}")
 		keyboard.add(coinex_futures)
 		keyboard.add(coinex_spot)
+		keyboard.add(coinex_margin)
+		keyboard.add(coinex_finacial)
+
 
 	else:
 		bybit_inverse = InlineKeyboardButton(f"ByBit Inverse (USD)",callback_data=f"option_bybit_inverse:{exchange}")
@@ -195,6 +200,7 @@ def deposit_options():
 	key_2 = InlineKeyboardButton(f"$3,000 USDT",callback_data=f"deposit:3000")
 	key_3 = InlineKeyboardButton(f"$5,000 USDT",callback_data=f"deposit:5000")
 	key_4 = InlineKeyboardButton(f"$10,000 USDT",callback_data=f"deposit:10000")
+	key_5 = InlineKeyboardButton(f"$25,000 USDT",callback_data=f"deposit:25000")
 	# key_4 = InlineKeyboardButton(f"$2,600  USDT",callback_data=f"deposit:2600")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:2")
 	
@@ -202,6 +208,7 @@ def deposit_options():
 	keyboard.add(key_2)
 	keyboard.add(key_3)
 	keyboard.add(key_4)
+	keyboard.add(key_5)
 	keyboard.add(back)
 	return(keyboard)
 
@@ -264,8 +271,8 @@ def back_to_configs():
 	return(keyboard)
 
 def Cancel_btn():
-    keyboard = ReplyKeyboardMarkup(True)
-    keyboard.row("❌ Cancel",)
-    return(keyboard)
+	keyboard = ReplyKeyboardMarkup(True)
+	keyboard.row("❌ Cancel",)
+	return(keyboard)
 
 
