@@ -9,7 +9,7 @@ from django.conf import settings
 from ratelimiter import RateLimiter
 from pycoingecko import CoinGeckoAPI
 from django.http import HttpResponse
-from .txn_bot import check_transaction
+# from .wrappers import *
 from .models import User,MyOrder,MyClient,STEP
 from django.views.decorators.http import require_http_methods
 
@@ -110,7 +110,53 @@ def set_my_client_name(message):
 	except:
 		my_option = ""
 
-	bot.send_message(chat_id=user_detail["chat_id"], text="Select the amount you want to deposit:",reply_markup=deposit_options())
+	bot.send_message(chat_id=user_detail["chat_id"], text="Select the currency you want to invest:",reply_markup=payment_method())
+
+
+
+
+def set_invest_amount(message):
+	user_detail =  user_details(message)
+	MY_STATE = return_state(user_detail["user_id"])
+	user = User.objects.get(user_id=user_detail["user_id"])
+
+	try:
+		amount = float(message.text)
+		q = MY_STATE['payment_method']
+
+		if q == "USDT":
+			detail = payment_detail.format(amount,"USDT",USDT)
+
+		elif q == "SOL":
+			detail = payment_detail.format(amount,"Sol",SOL)
+
+		elif q == "BTC":
+			detail = payment_detail.format(amount,"BTC",BTC)
+
+		elif q == "ETH":
+			detail = payment_detail.format(amount,"ETH",ETH)
+
+		elif q == "XRP":
+			detail = payment_detail.format(amount,"XRP",XRP)
+
+		elif q == "DOT":
+			detail = payment_detail.format(amount,"DOT",DOT)
+
+		elif q == "DODGE":
+			detail = payment_detail.format(amount,"DODGE",DODGE)
+		else:
+			pass
+
+		bot.send_message(chat_id=user_detail["chat_id"], text=detail,reply_markup=confirm_payment())
+		MY_STATE["deposit_amount"] = amount
+		STEP.objects.filter(user = user).update(state = MY_STATE)
+		STEP.objects.filter(user = user).update(next_step="")
+
+	except:
+		msg = bot.send_message(user_detail["chat_id"],"Please enter a number",reply_markup=Cancel_btn())
+		#REPEAT STEP
+		STEP.objects.filter(user = user).update(next_step="GET_INVEST_AMOUNT")
+
 
 def process_transaction_hash(message):
 	user_detail =  user_details(message)
@@ -127,28 +173,35 @@ def process_transaction_hash(message):
 		msg = "Hello you transaction is being processed. Please wait"
 
 		try:
-			result = check_transaction(message.text,MY_STATE["deposit_amount"])
+			amount = MY_STATE["deposit_amount"]
+			payment_method = MY_STATE['payment_method']
+			# payment_method = MY_STATE["payment_method"]
+			# result = check_transaction(message.text,MY_STATE["deposit_amount"])
 			if 'option' in MY_STATE:
 				my_exchange = f"{MY_STATE['exchange']} - {MY_STATE['option']}"
 			else:
 				my_exchange = f"{MY_STATE['exchange']}"
 
-			if result == True:
-				myclient = MyClient(myclient=MyUser,balance=MY_STATE["deposit_amount"],exchange=my_exchange,client_name=MY_STATE["client_name"],has_funds=True,start_trading=True)
-				myclient.save()
+			# if result == True:
+			myclient = MyClient(myclient=MyUser,balance=MY_STATE["deposit_amount"],exchange=my_exchange,client_name=MY_STATE["client_name"],has_funds=False,start_trading=False)
+			myclient.save()
 
-				bot.send_message(user_detail["chat_id"],msg,reply_markup=ReplyKeyboardRemove(selective=False))#Main_Menu())
-				bot.send_message(user_detail["chat_id"],"Once your deposit is confirmed the bot will start trading",reply_markup=Main_Menu())
-				STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
+			bot.send_message(user_detail["chat_id"],msg,reply_markup=ReplyKeyboardRemove(selective=False))#Main_Menu())
+			bot.send_message(user_detail["chat_id"],"Once your deposit is confirmed the bot will start trading",reply_markup=Main_Menu())
+			STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
+
+			notify_admin_payment(myclient.client_id,payment_method,message.text)
+
+
 			
-			elif result == False:
-				bot.send_message(user_detail["chat_id"],"There appears to be some incorrect details in your transaction.",reply_markup=ReplyKeyboardRemove(selective=False))
-				bot.send_message(user_detail["chat_id"],"Please contact support to rectify this.",reply_markup=tech_support())
+			# elif result == False:
+			# 	bot.send_message(user_detail["chat_id"],"There appears to be some incorrect details in your transaction.",reply_markup=ReplyKeyboardRemove(selective=False))
+			# 	bot.send_message(user_detail["chat_id"],"Please contact support to rectify this.",reply_markup=tech_support())
 				
-				STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
-			else:
-				msgs = bot.send_message(user_detail["chat_id"],"Invalid transaction hash, please check you transaction ID and try again")#Main_Menu())
-				STEP.objects.filter(user = user_detail["user_id"]).update(next_step="PROC_TXN_HASH")
+			# 	STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
+			# else:
+			# 	msgs = bot.send_message(user_detail["chat_id"],"Invalid transaction hash, please check you transaction ID and try again")#Main_Menu())
+			# 	STEP.objects.filter(user = user_detail["user_id"]).update(next_step="PROC_TXN_HASH")
 
 		except Exception as e:
 			print(e)
@@ -171,6 +224,19 @@ def notify_admin(user):
 		bot.send_message(admin.chat_id,msg)
 
 
+
+
+def notify_admin_payment(client_id,coin,txn_hash):
+	""" This is used to broadcast a new member subscription """
+	admins = User.objects.filter(is_admin=True)
+	client = MyClient.objects.get(client_id=client_id)
+
+	for admin in admins:
+		msg = f"@{client.myclient.user_name} invested  {client.balance} {coin} \n\n TXN HASH: <code>{txn_hash}</code>"
+		try:
+			bot.send_message(admin.chat_id,msg,reply_markup=admin_approval(client.myclient))
+		except Exception as e:
+			print(e,"uytdghjio98uydghjkioi7duyhgbn")
 # CALLBACK QUERY HANDLING OCCURS HERE
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -228,7 +294,8 @@ def callback_query(call):
 			except:
 				my_option = ""
 
-			bot.edit_message_text(chat_id=chat_id, text="Select the amount you want to invest:", message_id=call.message.message_id,reply_markup=deposit_options())
+			bot.edit_message_text(chat_id=chat_id, text="Select the currency you want to invest:", message_id=call.message.message_id,reply_markup=payment_method())
+
 
 		elif call.data.startswith("back_to_step:"):
 			q = call.data.split(":")[1]
@@ -265,25 +332,15 @@ def callback_query(call):
 			else:
 				pass
 
-		elif call.data.startswith("deposit:"):
-			q = call.data.split(":")[1]
-			MY_STATE["deposit_amount"] = q
-			STEP.objects.filter(user = user).update(state = MY_STATE)
-
-			detail = "<b>Please select your deposit currency:</b>"
-			bot.edit_message_text(chat_id=chat_id, text=detail, message_id=call.message.message_id,reply_markup=payment_method())
-
 		#THE BILLING PROGRAM STARTS HERE
 		elif call.data.startswith("pay_with:"):
 			q = call.data.split(":")[1]
-			amount = MY_STATE["deposit_amount"]
-			if q == "UST":
-				bot.answer_callback_query(call.id, "You are paying with UST")
-				detail = payment_detail.format(amount,"UST",UST)
-			else:
-				bot.answer_callback_query(call.id, "You are paying with USDT")
-				detail = payment_detail.format(amount,"USDT",USDT)
-			bot.edit_message_text(chat_id=chat_id, text=detail, message_id=call.message.message_id,reply_markup=confirm_payment())
+			MY_STATE["payment_method"] = q
+			STEP.objects.filter(user = user).update(state = MY_STATE)
+
+			detail = f"Please Enter amount of {q} you want to invest"
+			bot.send_message(chat_id=chat_id, text=detail,reply_markup=Cancel_btn())
+			STEP.objects.filter(user = user).update(next_step="GET_INVEST_AMOUNT")
 
 		elif call.data == "i_paid":
 			user = User.objects.get(user_id=userID)
@@ -332,6 +389,22 @@ def callback_query(call):
 		elif call.data == "new_client":
 			STEP.objects.filter(user = user).update(next_step="")
 			bot.edit_message_text(chat_id=chat_id, text=step_1_of_3, message_id=call.message.message_id,reply_markup=new_client_step_1_of_3(show_menu))
+
+
+		elif call.data.startswith("add_user:"):
+			q = call.data.split(":")[1]
+			subscriber = User.objects.get(user_id=q)
+
+			MyClient.objects.filter(myclient=subscriber).update(has_funds = True,start_trading=True)
+			bot.send_message(subscriber.chat_id,"Congratulations You deposit is successful the bot will start trading now.")
+
+		elif call.data.startswith("reject_user:"):
+			q = call.data.split(":")[1]
+			subscriber = User.objects.get(user_id=q)
+			msg = """Sorry but we could'nt process your payment therego the bot will not start trading.
+			"""
+			MyClient.objects.filter(myclient=subscriber).update(has_funds = False,start_trading = False)
+			bot.send_message(subscriber.chat_id,msg)
 
 		#ABOUT CORNIX CALLBACK DATA
 		elif call.data == "about_cornix":
@@ -408,6 +481,9 @@ def reply_msg(message):
 			set_my_client_name(message)
 		elif my_state.next_step == "PROC_TXN_HASH":
 			process_transaction_hash(message)
+		elif my_state.next_step == "GET_INVEST_AMOUNT":
+			print("HGBNMJHGFVB NHGV")
+			set_invest_amount(message)
 
 		else:
 			bot.send_message(user_detail["chat_id"],message.text)

@@ -4,8 +4,15 @@ from dateutil.relativedelta import *
 
 
 USDT = "TTLt2GSvrZy4dLHUJJFgiAMekHoKBj2VYr"
-UST = "terra1d3gld968chca9val3dek7y8msyr9ph2fkqhced"
+ETH = "0x675d8013F48D6917a5F0C5245616c8AdEBeEBA63"
+BTC = "1hc1GexRFmRVcpfhRZzuSwjvWYdkDjC2s"
+TRX = "TTLt2GSvrZy4dLHUJJFgiAMekHoKBj2VYr"
+DOT = "13eQZMvLexfBZJUD5jnCjBaBLnkEaFTFyG6ofb2GVvgtDdP7"
 
+XRP = "r9beU5KAbECKKdnaAbNLGWsAJZvFgaHZyV"
+DODGE = "DFTkqh852yyF8awffVXvbQqDxYzC1eUitk"
+
+SOL = "CAED2xivAPQFEbPP52hT28v5zUceyswADC8i7fS2WGaZ"
 
 
 def is_active(user):

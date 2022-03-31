@@ -216,8 +216,20 @@ def deposit_options():
 def payment_method():
 	keyboard = InlineKeyboardMarkup()
 	usdt_pay = InlineKeyboardButton("⚡ USDT.TRC20 (Tether USD(Tron/TRC20))",callback_data=f"pay_with:USDT")
+	sol_pay = InlineKeyboardButton("⚡ Solana (SOL)",callback_data=f"pay_with:SOL")
+	btc_pay = InlineKeyboardButton("⚡ Bitcoin (BTC)",callback_data=f"pay_with:BTC")
+	eth_pay = InlineKeyboardButton("⚡ Ethereum (ETH)",callback_data=f"pay_with:ETH")
+	xrp_pay = InlineKeyboardButton("⚡ Ripple (XRP)",callback_data=f"pay_with:XRP")
+	dot_pay = InlineKeyboardButton("⚡ Polkadot (DOT)",callback_data=f"pay_with:DOT")
+	dodge_pay = InlineKeyboardButton("⚡ Dodge",callback_data=f"pay_with:DODGE")
 	back = InlineKeyboardButton("↵ Back",callback_data=f"return_to_menu")
 	keyboard.add(usdt_pay)
+	keyboard.add(sol_pay)
+	keyboard.add(btc_pay)
+	keyboard.add(eth_pay)
+	keyboard.add(xrp_pay)
+	keyboard.add(dot_pay)
+	keyboard.add(dodge_pay)
 	keyboard.add(back)
 	return(keyboard)
 
@@ -276,3 +288,9 @@ def Cancel_btn():
 	return(keyboard)
 
 
+def admin_approval(user):
+	keyboard = InlineKeyboardMarkup()
+	approve = InlineKeyboardButton("✅ Approve",callback_data=f"add_user:{user}")
+	reject = InlineKeyboardButton("❌ Reject",callback_data=f"reject_user:{user}")
+	keyboard.add(approve,reject)
+	return(keyboard)
