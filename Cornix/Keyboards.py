@@ -77,8 +77,8 @@ def new_client_step_1_of_3(show_menu):
 def new_client_step_1_2_of_3(exchange,show_menu):
 	keyboard = InlineKeyboardMarkup()
 	if exchange == "Binance":
-		binance_futures = InlineKeyboardButton(f"Binance Futures (USDT)",callback_data=f"option_binance_futures:{exchange}")
-		binance_coins_futures = InlineKeyboardButton(f"Binance Coins-Futures (USD)",callback_data=f"option_binance_coins_futures:{exchange}")
+		binance_futures = InlineKeyboardButton(f"Binance Futures",callback_data=f"option_binance_futures:{exchange}")
+		binance_coins_futures = InlineKeyboardButton(f"Binance Coins-Futures",callback_data=f"option_binance_coins_futures:{exchange}")
 		binance_spot = InlineKeyboardButton(f"Binance Spot (Regular)",callback_data=f"option_binance_spot:{exchange}")
 
 		keyboard.add(binance_futures)
@@ -86,7 +86,7 @@ def new_client_step_1_2_of_3(exchange,show_menu):
 		keyboard.add(binance_spot)
 
 	elif exchange == "Coinex":
-		coinex_futures = InlineKeyboardButton(f"Coinex Futures (USDT)",callback_data=f"option_coinex_futures:{exchange}")
+		coinex_futures = InlineKeyboardButton(f"Coinex Futures",callback_data=f"option_coinex_futures:{exchange}")
 		coinex_spot = InlineKeyboardButton(f"Coinex Spot (Regular)",callback_data=f"option_coinex_spot:{exchange}")
 		coinex_margin = InlineKeyboardButton(f"Coinex Margin",callback_data=f"option_coinex_margin:{exchange}")
 		coinex_finacial = InlineKeyboardButton(f"Coinex Financial",callback_data=f"option_coinex_financial:{exchange}")
@@ -97,8 +97,8 @@ def new_client_step_1_2_of_3(exchange,show_menu):
 
 
 	else:
-		bybit_inverse = InlineKeyboardButton(f"ByBit Inverse (USD)",callback_data=f"option_bybit_inverse:{exchange}")
-		bybit_linear = InlineKeyboardButton(f"ByBit Linear (USDT)",callback_data=f"option_bybit_linear:{exchange}")
+		bybit_inverse = InlineKeyboardButton(f"ByBit Inverse ",callback_data=f"option_bybit_inverse:{exchange}")
+		bybit_linear = InlineKeyboardButton(f"ByBit Linear",callback_data=f"option_bybit_linear:{exchange}")
 
 		keyboard.add(bybit_inverse)
 		keyboard.add(bybit_linear)
