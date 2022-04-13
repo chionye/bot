@@ -529,9 +529,10 @@ def callback_query(call):
 			q = call.data.split(":")[1]
 			MY_STATE["WITHDRAWAL"]["withdrawal_currency"] = q
 			msg = "Please enter the amount you want to withdraw in USDT:"
+			STEP.objects.filter(user = user).update(state = MY_STATE,next_step="GET_WITHDRAWAL_AMOUNT")
 			bot.send_message(chat_id=chat_id, text=msg,reply_markup=Cancel_btn())
 
-			STEP.objects.filter(user = user).update(state = MY_STATE,next_step="GET_WITHDRAWAL_AMOUNT")
+			
 
 
 		elif call.data == "confirm_withdrawal":
