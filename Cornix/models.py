@@ -75,7 +75,7 @@ class STEP(models.Model):
 
 	step_id = models.UUIDField(primary_key=True, default=uuid.uuid1, editable=False, unique=True)
 	user = models.OneToOneField(User, on_delete=models.CASCADE,editable=False) # The user who owns this client
-	next_step = models.CharField(max_length=20,)# The current step the use is in
+	next_step = models.CharField(max_length=255,)# The current step the use is in
 	state = models.TextField(blank = True)
 
 	def __str__(self):
