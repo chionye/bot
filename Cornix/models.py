@@ -35,6 +35,7 @@ class MyClient(models.Model):
 	start_trading = models.BooleanField(default=False) # Used to signify that this client is ready to start trading
 	initial_deposit_date = models.DateTimeField(auto_now_add=True, null=False)# date this client was created
 	exchange =   models.CharField(max_length=20,)# The exchange the bot is to trade in
+	investment_currency = models.CharField(max_length=20,default="USDT")# The currency a user invested in
 	
 
 	def __str__(self):

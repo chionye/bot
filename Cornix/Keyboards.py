@@ -18,14 +18,15 @@ def home_key():
 	Trades = InlineKeyboardButton("Trades",callback_data=f"my_trades")
 	bot_configs = InlineKeyboardButton("⚙️ Bot Configuration",callback_data=f"bot_configs")
 	# misc = InlineKeyboardButton("Misc.",callback_data=f"misc")
-	# subscription = InlineKeyboardButton("📝 Subscription",callback_data=f"my_subscription")
+	# subscription = InlineKeyboardButton("📝Subscription",callback_data=f"my_subscription")
 	about_cornix = InlineKeyboardButton(f"ℹ️ Help",callback_data=f"about_cornix")
 	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
+	widthdrawal = InlineKeyboardButton(f"♻️ widthdraw",callback_data=f"widthdrawal")
 
 	keyboard.add(new_client)
 	keyboard.add(my_portfolio,Trades)
 	keyboard.add(bot_configs)
-	# keyboard.add(subscription)
+	keyboard.add(widthdrawal)
 	keyboard.add(support,about_cornix)
 	return(keyboard)
 
@@ -60,19 +61,21 @@ def new_client_step_1_of_3(show_menu):
 	Huobipro_client = InlineKeyboardButton(f"Huobi.pro",callback_data=f"Huobi.pro@client")
 	coinex_client = InlineKeyboardButton(f"Coinex",callback_data=f"Coinex@client")
 	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
+	main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
 
-	if show_menu == True:
-		main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
-		keyboard.add(main_menu)
-	else:
-		pass
+	
 	
 	keyboard.add(Binance_client,FTX_client)
 	keyboard.add(ByBit_client,BitMEX_client)
 	keyboard.add(Huobipro_client,coinex_client)
 	keyboard.add(support)
-	return(keyboard)
+	if show_menu == True:
+		keyboard.add(main_menu)
+	else:
+		pass
 
+	return(keyboard)
+	
 
 def new_client_step_1_2_of_3(exchange,show_menu):
 	keyboard = InlineKeyboardMarkup()
@@ -103,11 +106,9 @@ def new_client_step_1_2_of_3(exchange,show_menu):
 		keyboard.add(bybit_inverse)
 		keyboard.add(bybit_linear)
 
-	if show_menu == True:
-		main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
-		keyboard.add(main_menu)
-	else:
-		pass
+	main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
+
+	
 
 	about_cornix = InlineKeyboardButton(f"About Cornix",callback_data=f"about_cornix")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:1")
@@ -115,6 +116,10 @@ def new_client_step_1_2_of_3(exchange,show_menu):
 	
 	
 	keyboard.add(about_cornix,support)
+	if show_menu == True:
+		keyboard.add(main_menu)
+	else:
+		pass
 	keyboard.add(back)
 	return(keyboard)
 
@@ -126,16 +131,18 @@ def new_client_step_2_of_3(exchange,show_menu):
 	about_cornix = InlineKeyboardButton(f"About Cornix",callback_data=f"about_cornix")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:1_2")
 	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
+	main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
 
-	if show_menu == True:
-		main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
-		keyboard.add(main_menu)
-	else:
-		pass
+	
 	
 	keyboard.add(client_name)
 	keyboard.add(about_cornix,support)
+	if show_menu == True:
+		keyboard.add(main_menu)
+	else:
+		pass
 	keyboard.add(back)
+	
 	return(keyboard)
 
 def new_client_step_3_of_3(exchange,show_menu):
@@ -144,14 +151,13 @@ def new_client_step_3_of_3(exchange,show_menu):
 	about_cornix = InlineKeyboardButton(f"About Cornix",callback_data=f"about_cornix")
 	back = InlineKeyboardButton(f"↵ Back",callback_data=f"back_to_step:2")
 	support = InlineKeyboardButton(f"Support 🙋",url="http://t.me/Cornixsupport_bot")
+	main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
 
+	keyboard.add(about_cornix,support)
 	if show_menu == True:
-		main_menu = InlineKeyboardButton("⇱ Main Menu",callback_data=f"return_to_menu")
 		keyboard.add(main_menu)
 	else:
 		pass
-
-	keyboard.add(about_cornix,support)
 	keyboard.add(back)
 	return(keyboard)
 
@@ -288,9 +294,48 @@ def Cancel_btn():
 	return(keyboard)
 
 
-def admin_approval(user):
+def admin_approval(user,client_id):
 	keyboard = InlineKeyboardMarkup()
-	approve = InlineKeyboardButton("✅ Approve",callback_data=f"add_user:{user}")
+	approve = InlineKeyboardButton("✅ Approve",callback_data=f"add_user:{user},{client_id}")
 	reject = InlineKeyboardButton("❌ Reject",callback_data=f"reject_user:{user}")
+	keyboard.add(approve,reject)
+	return(keyboard)
+
+
+# This is for withdrawals
+
+def withdrawal_currency_opt():
+	keyboard = InlineKeyboardMarkup()
+	usdt_pay = InlineKeyboardButton("⚡ TETHER USD/Tron (TRC20)",callback_data=f"withdraw_with:USDT")
+	btc_pay = InlineKeyboardButton("⚡ BITCOIN (BTC)",callback_data=f"withdraw_with:SOL")
+	eth_pay = InlineKeyboardButton("⚡ ETHEREUM (ETH)",callback_data=f"withdraw_with:BTC")
+	sol_pay = InlineKeyboardButton("⚡ SOLANA (SOL)",callback_data=f"withdraw_with:ETH")
+	xrp_pay = InlineKeyboardButton("⚡ RIPPLE (XRP)",callback_data=f"withdraw_with:XRP")
+	dot_pay = InlineKeyboardButton("⚡ POLKADOT (DOT)",callback_data=f"withdraw_with:DOT")
+	dodge_pay = InlineKeyboardButton("⚡ DODGE",callback_data=f"withdraw_with:DODGE")
+	back = InlineKeyboardButton("↵ Back",callback_data=f"return_to_menu")
+	keyboard.add(usdt_pay)
+	keyboard.add(btc_pay)
+	keyboard.add(eth_pay)
+	keyboard.add(sol_pay)
+	keyboard.add(xrp_pay)
+	keyboard.add(dot_pay)
+	keyboard.add(dodge_pay)
+	keyboard.add(back)
+	return(keyboard)
+
+
+def confirm_withdrawal():
+	keyboard = InlineKeyboardMarkup()
+	approve = InlineKeyboardButton("✅ Confirm",callback_data=f"confirm_withdrawal")
+	reject = InlineKeyboardButton("❌ Cancel",callback_data=f"cancel_withdrawal")
+	keyboard.add(approve,reject)
+	return(keyboard)
+
+
+def admin_approve_withdrawal(client_id,withdrawal_amount):
+	keyboard = InlineKeyboardMarkup()
+	approve = InlineKeyboardButton("✅ Approve Withdrawal",callback_data=f"approve_withdrawal:{client_id},{withdrawal_amount}")
+	reject = InlineKeyboardButton("❌ Reject Withdrawal",callback_data=f"reject_withdrawal:{client_id}")
 	keyboard.add(approve,reject)
 	return(keyboard)
