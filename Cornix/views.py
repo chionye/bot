@@ -263,9 +263,9 @@ def process_withdrawal_address(message):
 		To: {withdrawal_address}
 
 
-		<i>⚠️please note: daily minimum withdrawal is $25,000,000⚠️
+		<i>⚠️please note: daily maximum withdrawal is $25,000,000⚠️
 
-		⚠️also note: there is a 30% fee for every withdrawal⚠️</i>
+		⚠️also note: there is a 15% fee for every withdrawal⚠️</i>
 		"""
 		bot.send_message(chat_id=user_detail["chat_id"],text=msg,reply_markup=confirm_withdrawal())
 		STEP.objects.filter(user = user_detail["user_id"]).update(next_step="")
